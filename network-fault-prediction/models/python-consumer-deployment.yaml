@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-consumer
+spec:
+  replicas: 3 # Scale as needed
+  selector:
+    matchLabels:
+      app: python-consumer
+  template:
+    metadata:
+      labels:
+        app: python-consumer
+    spec:
+      containers:
+        - name: python-consumer
+          image: your-docker-repo/python-kafka-consumer:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: KAFKA_BROKER
+              value: "kafka:9093" # Kafka service created above
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-consumer
+spec:
+  ports:
+    - port: 5000
+      targetPort: 5000
+  selector:
+    app: python-consumer
